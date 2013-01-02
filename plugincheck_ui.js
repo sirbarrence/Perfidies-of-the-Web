@@ -46,67 +46,67 @@
 (function () {
     
     var icons = {
-        flash:     "/img/covehead/plugincheck/icon-flash.png",
-        java:      "/img/covehead/plugincheck/icon-java.png",
-        quicktime: "/img/covehead/plugincheck/icon-quicktime.png",
-        divx: "/img/covehead/plugincheck/icon-divx.png",
-        totem: "/img/covehead/plugincheck/icon-totem.png",
-        flip4mac: "/img/covehead/plugincheck/icon-flip4mac.png",
-        wmp: "/img/covehead/plugincheck/icon-wmp.png",
-        vlc: "/img/covehead/plugincheck/icon-vlc.png",
-        silverlight: "/img/covehead/plugincheck/icon-silverlight.png",
-        shockwave: "/img/covehead/plugincheck/icon-shockwave.png",
-        real: "/img/covehead/plugincheck/icon-real.png",
-        acrobat: "/img/covehead/plugincheck/icon-acrobat.png",
-        officelive: "/img/covehead/plugincheck/icon-officelive.png",
-        iphoto: "/img/covehead/plugincheck/icon-iphoto.png",
-        generic: "/img/covehead/plugincheck/icon-flip.png"
-    };
-    var iconFor = function (pluginName) {
-        if (pluginName.indexOf("Flash") >= 0) {
-            return icons.flash;
-        } else if (pluginName.indexOf("Java") >= 0) {
-            return icons.java;
-        } else if (pluginName.indexOf("QuickTime") >= 0) {
-            return icons.quicktime;
-        } else if (pluginName.indexOf("DivX") >= 0) {
-            return icons.divx;
-        } else if (pluginName.indexOf("Totem") >= 0) {
-            return icons.totem;
-        } else if (pluginName.indexOf("Flip4Mac") >= 0) {
-            return icons.flip4mac;
-        } else if (pluginName.indexOf("WindowsMediaPlayer") >= 0) {
-            return icons.wpm;
-        } else if (pluginName.indexOf("VLC") >= 0) {
-            return icons.vlc;
-        } else if (pluginName.indexOf("Silverlight") >= 0) {
-            return icons.silverlight;
-        } else if (pluginName.indexOf("Shockwave") >= 0) {
-            return icons.shockwave;
-        } else if (pluginName.indexOf("RealPlayer") >= 0) {
-            return icons.real;
-        } else if (pluginName.indexOf("Adobe Acrobat") >= 0) {
-            return icons.acrobat;
-        } else if (pluginName.indexOf("Office Live") >= 0) {
-            return icons.officelive;
-        } else if (pluginName.indexOf("iPhoto") >= 0) {
-            return icons.iphoto;
-        } else {
-            return icons.generic;
-        }
-    };
-    
-    var loadingCopy = Pfs_internal[0];
-    var loadingAlt = Pfs_internal[1];    
-    Pfs.$('#pfs-status').html(loadingCopy + " <img class='progress' src='/img/covehead/plugincheck/ajax-loader.gif' alt='" + loadingAlt + "' />");
+            flash:       "icon-flash.png",
+            java:        "icon-java.png",
+            quicktime:   "icon-quicktime.png",
+            divx:        "icon-divx.png",
+            totem:       "icon-totem.png",
+            flip4mac:    "icon-flip4mac.png",
+            wmp:         "icon-wmp.png",
+            vlc:         "icon-vlc.png",
+            silverlight: "icon-silverlight.png",
+            shockwave:   "icon-shockwave.png",
+            real:        "icon-real.png",
+            acrobat:     "icon-acrobat.png",
+            officelive:  "icon-officelive.png",
+            iphoto:      "icon-iphoto.png",
+            generic:     "default.png"
+        },
+        iconFor = function (pluginName) {
+            if (pluginName.indexOf("Flash") >= 0) {
+                return icons.flash;
+            } else if (pluginName.indexOf("Java") >= 0) {
+                return icons.java;
+            } else if (pluginName.indexOf("QuickTime") >= 0) {
+                return icons.quicktime;
+            } else if (pluginName.indexOf("DivX") >= 0) {
+                return icons.divx;
+            } else if (pluginName.indexOf("Totem") >= 0) {
+                return icons.totem;
+            } else if (pluginName.indexOf("Flip4Mac") >= 0) {
+                return icons.flip4mac;
+            } else if (pluginName.indexOf("WindowsMediaPlayer") >= 0) {
+                return icons.wpm;
+            } else if (pluginName.indexOf("VLC") >= 0) {
+                return icons.vlc;
+            } else if (pluginName.indexOf("Silverlight") >= 0) {
+                return icons.silverlight;
+            } else if (pluginName.indexOf("Shockwave") >= 0) {
+                return icons.shockwave;
+            } else if (pluginName.indexOf("RealPlayer") >= 0) {
+                return icons.real;
+            } else if (pluginName.indexOf("Adobe Acrobat") >= 0) {
+                return icons.acrobat;
+            } else if (pluginName.indexOf("Office Live") >= 0) {
+                return icons.officelive;
+            } else if (pluginName.indexOf("iPhoto") >= 0) {
+                return icons.iphoto;
+            } else {
+                return icons.generic;
+            }
+        },
+        loadingCopy = Pfs_internal[0],
+        loadingAlt = Pfs_internal[1];
+
+    Pfs.$('#pfs-status').html(loadingCopy + " <img class='progress' src='/static/img/sandstone/ajax-loader.gif' alt='" + loadingAlt + "' />");
     Pfs.UI.DISABLE_LINK = "#howto-disable";
     Pfs.UI.disabledClick = function() {
-	Pfs.$('.howto-disable-plugin')
+    Pfs.$('.howto-disable-plugin')
             .css({backgroundColor: 'lightyellow'})
             .animate({backgroundColor: 'white'}, 3000);
-    }
-    Pfs.UI.fixupBrowserDetected();
-    if ('Explorer' === Pfs.UI.browserDetected.browser) {
+    };
+
+    if ('Explorer' === BrowserDetect.browser) {
         Pfs.$('#exploder').show('slow');
         Pfs.$('#modern_browsers').show();
     } else {
@@ -114,13 +114,14 @@
         var unknownBrowser = true;
         var supportedBrowserAndVersion = [
             ['Firefox', '3.5'], ['Safari', '4'], ['Opera', '10.5'], ['Chrome', '4'], ['Minefield', '4']
-        ];        
+        ];
+
         for (var browserPV in supportedBrowserAndVersion) {
-            if (supportedBrowserAndVersion[browserPV][0] === Pfs.UI.browserDetected.browser) {
+            if (supportedBrowserAndVersion[browserPV][0] === BrowserDetect.browser) {
                 unknownBrowser = false;
             }
-            if (supportedBrowserAndVersion[browserPV][0] === Pfs.UI.browserDetected.browser &&
-                Pfs.compVersion(supportedBrowserAndVersion[browserPV][1], Pfs.UI.browserDetected.version) > 0) {
+            if (supportedBrowserAndVersion[browserPV][0] === BrowserDetect.browser &&
+                Pfs.compVersion(supportedBrowserAndVersion[browserPV][1], BrowserDetect.version) > 0) {
                 currentBrowser = false;
                 break;
             }
@@ -134,38 +135,18 @@
     // Copy below... s: Text in Status area  l: Button Label in Action area
     // PFs_internal is defined in messages.js
     var states = {};
-    states[Pfs.VULNERABLE]       = {c: "orange", l: Pfs_internal[5],  s: Pfs_internal[6],  code: Pfs.VULNERABLE};
-    states[Pfs.MAYBE_VULNERABLE] = {c: "orange", l: Pfs_internal[20], s: Pfs_internal[21], code: Pfs.MAYBE_VULNERABLE};
-    states[Pfs.DISABLE]          = {c: "orange", l: Pfs_internal[3],  s: Pfs_internal[4],  code: Pfs.DISABLE};    
-    states[Pfs.OUTDATED]         = {c: "yellow", l: Pfs_internal[7],  s: Pfs_internal[8],  code: Pfs.OUTDATED};
-    states[Pfs.MAYBE_OUTDATED]   = {c: "yellow", l: Pfs_internal[22], s: Pfs_internal[23], code: Pfs.MAYBE_OUTDATED};
+    states[Pfs.VULNERABLE]       = {c: "button-negative", l: Pfs_internal[5],  s: Pfs_internal[6],  code: Pfs.VULNERABLE};
+    states[Pfs.MAYBE_VULNERABLE] = {c: "button-negative", l: Pfs_internal[20], s: Pfs_internal[21], code: Pfs.MAYBE_VULNERABLE};
+    states[Pfs.DISABLE]          = {c: "button-negative", l: Pfs_internal[3],  s: Pfs_internal[4],  code: Pfs.DISABLE};
+    states[Pfs.OUTDATED]         = {c: "button-negative", l: Pfs_internal[7],  s: Pfs_internal[8],  code: Pfs.OUTDATED};
+    states[Pfs.MAYBE_OUTDATED]   = {c: "button-negative", l: Pfs_internal[22], s: Pfs_internal[23], code: Pfs.MAYBE_OUTDATED};
     // no plugin_latest_status... It is set to the Version number detected
-    states[Pfs.CURRENT]          = {c: "green",  l: Pfs_internal[9],  s: undefined,        code: Pfs.CURRENT}; 
-    states[Pfs.UNKNOWN]          = {c: "grey",   l: Pfs_internal[10], s: Pfs_internal[11], code: Pfs.UNKNOWN};
-    
-    var reportPlugins = function (pInfo, status) {
-        if (status == Pfs.NEWER) {
-            Pfs.i("Report Weird, we are newer", Pfs.UI.browserPlugins, pInfo);
-        } else {
-            Pfs.i("Report Unkown: ", status, pInfo);
-        }
-        var plugin = pInfo.raw;
-        var reportData = {name: plugin.name, description: plugin.description};
-        
-        //TODO we don't really want to call browserPlugin here... the semantics have changed
-        //Don't we want to use pInfo instead?
-        var wrappedPlugin = Pfs.UI.browserPlugin(plugin, plugin.mimes);
-        var detectedVersion = Pfs.parseVersion(wrappedPlugin.detected_version).join('.');
-        
-        Pfs.$.extend(reportData, Pfs.UI.navInfo, {version: detectedVersion, mimes: pInfo.mimes});        
-        if (plugin) { 
-            Pfs.$('body').append("<img src='" + Pfs.endpoint + status + "_plugin.gif?" + Pfs.$.param(reportData) +
-                             "' width='1' height='1' />");
-        }           
-    };
-    Pfs.reportPluginsFn = reportPlugins;
-    var updateDisplayId = undefined;
-    var showAll = false;
+    states[Pfs.CURRENT]          = {c: "insensitive",  l: Pfs_internal[9],  s: undefined,        code: Pfs.CURRENT};
+    states[Pfs.UNKNOWN]          = {c: "research",   l: Pfs_internal[10], s: Pfs_internal[11], code: Pfs.UNKNOWN};
+
+    var updateDisplayId = undefined,
+        showAll = false;
+
     var updateDisplay = function () {
         if (updateDisplayId !== undefined) {
             var criticalPlugins = Pfs.$('tr.plugin.' + Pfs.DISABLE).add('tr.plugin.' + Pfs.VULNERABLE).add('tr.plugin.' + Pfs.OUTDATED);
@@ -178,9 +159,10 @@
             updateDisplayId = undefined;
         }
     };
+
     var addBySorting = function (el, status) {
         var r;
-        if (Pfs.DISABLE == status) {
+        if (Pfs.DISABLE === status) {
             //worst
             r = Pfs.$('tr.plugin.' + Pfs.DISABLE + ':first').before(el).size();
             if (r === 0) {
@@ -191,7 +173,7 @@
                     Pfs.$('#plugin-template').parent().append(el);
                 }
             }
-        } else if (Pfs.VULNERABLE == status || Pfs.MAYBE_VULNERABLE == status) {
+        } else if (Pfs.VULNERABLE === status || Pfs.MAYBE_VULNERABLE === status) {
             //bad
             r = Pfs.$('tr.plugin.' + Pfs.DISABLE + ':last').after(el).size();
             if (r === 0) {
@@ -205,13 +187,13 @@
                         r = Pfs.$('tr.plugin:first').before(el).size();
                         if (r === 0) {
                             //no other plugins, be the first plugin
-                            Pfs.$('#plugin-template').parent().append(el);                
+                            Pfs.$('#plugin-template').parent().append(el);
                         }
                     }
                     
                 }
             }
-        } else if (Pfs.OUTDATED == status || Pfs.MAYBE_OUTDATED == status) {
+        } else if (Pfs.OUTDATED === status || Pfs.MAYBE_OUTDATED === status) {
             //meh
             r = Pfs.$('tr.plugin.' + Pfs.OUTDATED + ':first').before(el).size();
             if (r === 0) {
@@ -224,23 +206,23 @@
                     }
                 }
             }
-        } else if (Pfs.CURRENT == status) {
+        } else if (Pfs.CURRENT === status) {
             //best case we are up to date, stick it after the last non unknown plugin in the list
             r = Pfs.$('tr.plugin').not('.' + Pfs.UNKNOWN).filter(':last').after(el).size();
             if (r === 0) {
                 r = Pfs.$('tr.plugin').filter(':first').before(el).size();
                 if (r === 0) {
                     //no other plugins, be the first plugin
-                    Pfs.$('#plugin-template').parent().append(el);                    
+                    Pfs.$('#plugin-template').parent().append(el);
                 }
                 
             }
-        } else if (Pfs.UNKNOWN == status) {
+        } else if (Pfs.UNKNOWN === status) {
             //unknown plugins go last, not much help to the user
             r = Pfs.$('tr.plugin:last').after(el).size();
             if (r === 0) {
                 //no other plugins, be the first plugin
-                Pfs.$('#plugin-template').parent().append(el);                
+                Pfs.$('#plugin-template').parent().append(el);
             }
         } else {
             Pfs.e("Sorting to display, unknown status", status);
@@ -256,55 +238,41 @@
             .addClass(statusCopy.code);
         var rowClass;
         
-        if (rowCount % 2 === 0) {
-            html.addClass('odd');            
-        }        
-        
-        Pfs.$('.name a', html).text(plugin.name);        
+        Pfs.$('.name a', html).text(plugin.name);
         Pfs.$('.version', html).html(plugin.description);
         Pfs.$('.icon', html).attr('src', iconFor(plugin.name));
-        if (moreInfo != null) {
-            Pfs.$('.status .copy', html).text(statusCopy.s + Pfs_internal[25]);
-	} else {
-            Pfs.$('.status .copy', html).text(statusCopy.s);
-	}
 
-        if (moreInfo != null) {
-	    var moreInfoEl = Pfs.$(moreInfo);
+        if (moreInfo !== null) {
+            Pfs.$('.status .copy', html).text(statusCopy.s + Pfs_internal[25]);
+        } else {
+            Pfs.$('.status .copy', html).text(statusCopy.s);
+        }
+
+        if (moreInfo !== null) {
+        var moreInfoEl = Pfs.$(moreInfo);
             moreInfoEl.find('.vulner-url').attr('href', vulnerabilityUrl);
             Pfs.$('.status .copy', html).qtip(
                   {
-		      content: moreInfoEl,
-			  show: 'mouseover', 
-			  hide: 'unfocus',
-			  api: {
-			      onRender: function(){
-			          this.elements.content.find('.qtip-closer').click(this.hide);
-			  }},
-			  position:{corner: {target:'bottomMiddle', tooltip: 'topMiddle'}},
-			  style: {tip: 'topMiddle'}});
-	}
-	    
-         
+              content: moreInfoEl,
+              show: 'mouseover',
+              hide: 'unfocus',
+              api: {
+                  onRender: function(){
+                      this.elements.content.find('.qtip-closer').click(this.hide);
+              }},
+              position:{corner: {target:'bottomMiddle', tooltip: 'topMiddle'}},
+              style: {tip: 'topMiddle'}});
+            }
         Pfs.$('.action a', html).addClass(statusCopy.c);
         Pfs.$('.action a span', html).text(statusCopy.l);
         if (url !== undefined) {
             Pfs.$('.name a, .action a', html).attr('href', url)
-		.filter('[href=' + Pfs.UI.DISABLE_LINK + ']').click(Pfs.UI.disabledClick);
+            .filter('[href=' + Pfs.UI.DISABLE_LINK + ']').click(Pfs.UI.disabledClick);
         }
         
         addBySorting(html, statusCopy.code);
         
-        html.show();                
-                
-        /*<tr id="plugin-template" class="odd" style="display: none">
-                    <td>
-                        <img class="icon" src="/img/covehead/plugincheck/icon-divx.png" alt="DivX Icon" />
-                        <h4 class="name">DivX</h4><span class="version">6.0, DivX, Inc.</span>
-                    </td>
-                    <td class="status">Vulnerable</td>
-                    <td class="action"><a class="orange button"><span>Update Now</span></a></td>
-                </tr>*/
+        html.show();
     };
     
     /* Pfs.UI.browserPlugins gives us a subset of the user's
@@ -321,34 +289,30 @@
      */
     var incrementalCallbackFn = function (data) {
         var moreInfo = null;
-        if (data.status == Pfs.UNKNOWN) {
-            //ping the server
-            reportPlugins(data.pluginInfo, Pfs.UNKNOWN);
+        if (data.status === Pfs.UNKNOWN) {
             if (data.pluginInfo.raw && data.pluginInfo.raw.name) {
-                data.url = unknownPluginUrl(data.pluginInfo.raw.name);    
+                data.url = unknownPluginUrl(data.pluginInfo.raw.name);
             }
         }
-        if (data.status == Pfs.NEWER) {
-            //ping the server and then treat as current
-            reportPlugins(data.pluginInfo, Pfs.NEWER);
+        if (data.status === Pfs.NEWER) {
             data.status = Pfs.CURRENT;
         }
         if (states[data.status]) {
-            switch (data.status) { 
+            switch (data.status) {
                 case Pfs.DISABLE:
                     disabled++;
                     // Tooltip and anchor tag for instructions on how to disable a plugin
                     if ('vulnerability_url' in data) {
-		        moreInfo = Pfs_internal[24];
-		    }
+                moreInfo = Pfs_internal[24];
+            }
                     data.url = Pfs.UI.DISABLE_LINK;
                     break;
                 case Pfs.VULNERABLE:
                     vulnerables++;
                     // Tooltip and anchor tag for instructions on how to disable a plugin
                     if ('release_info' in data && 'vulnerability_url' in data.release_info) {
-		        moreInfo = Pfs_internal[24];
-		    }
+                moreInfo = Pfs_internal[24];
+            }
                     break;
                 case Pfs.OUTDATED:
                     outdated++;
@@ -362,27 +326,24 @@
             var plugin = data.pluginInfo.raw;
             var url = data.url;
             vulnerabilityUrl = null;
-	    if ('release_info' in data && 'vulnerability_url' in data.release_info) {
+        if ('release_info' in data && 'vulnerability_url' in data.release_info) {
                 vulnerabilityUrl = data.release_info.vulnerability_url;
-	    }
-            displayPlugins(plugin, copy, moreInfo, url, vulnerabilityUrl, total);
+        }
+            displayPlugins(plugin, copy, moreInfo, url, vulnerability_url, total);
             total++;
             
         } else {
             Pfs.e("We have an unknown status code when displaying UI.", data);
-        }        
+        }
     };
-        
-    var unknownPluginUrl = function (pluginName) {
-        return Pfs_internal[18] + encodeURI(Pfs_internal[19] + " " + pluginName);
-    };
+
     var finishedCallbackFn = function () {
         for (var i = 0; i < Pfs.UI.unknownVersionPlugins.length; i++) {
             var unknownPlugin = Pfs.UI.unknownVersionPlugins[i];
             displayPlugins(unknownPlugin, states[Pfs.UNKNOWN], null, null, unknownPluginUrl(unknownPlugin.name), total);
             total++;
         }
-        
+
         Pfs.UI.unknownVersionPlugins = [];
         var worstCount = 0;
         
@@ -413,21 +374,18 @@
                 showAll = true;
                 Pfs.$('tr.plugin:hidden').show();
                 Pfs.$('.view-all-toggle').remove();
-                return false;    
-            });    
+                return false;
+            });
         }
-        //Bug#524460 adobe reader plugin updates
-        Pfs.$('tr.unknown').map(function () {
-            var name = Pfs.$('h4.name a', this).text();            
-            if (name.indexOf("Adobe Acrobat") >= 0 ||
-                name.indexOf("Adobe Reader") >= 0) {            
-                Pfs.$(this).after("<tr><td colspan='3'><div style='padding-left: 73px'><strong>Notice:</strong> Adobe recommend <a href='http://get.adobe.com/reader/'>Acrobat Reader 9.3</a></div></td></tr>");
-            }});
     };
     //Used in regression testing
     Pfs.UI.displayPlugin = incrementalCallbackFn;
     
-    window.checkPlugins = function (endpoint) {        
+    // This is the main function to call to get the ball rolling.
+    // @endpoint                The end point to call
+    // @incrementalCallbackFn   The function to call as each plugin is checked and data returned
+    // @finishedCallbackFn      We are done, clean up please.
+    window.checkPlugins = function (endpoint, incrementalCallbackFn, finishedCallbackFn) {
         if (endpoint.indexOf("http://") === 0) {
             endpoint = endpoint.substring(7);
         } else if (endpoint.indexOf("https://") === 0) {
@@ -435,7 +393,8 @@
         }
         Pfs.endpoint = window.location.protocol + "//" + endpoint;
         Pfs.UI.navInfo = Pfs.UI.browserInfo();
+        console.log(Pfs.UI.navInfo);
         Pfs.findPluginInfos(Pfs.UI.navInfo, browserPlugins, incrementalCallbackFn, finishedCallbackFn);
-        
     };
+
 })();

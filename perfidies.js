@@ -153,7 +153,7 @@ Pfs = {
      * has a mimes property. This is a space delimited list of all the mime-types the
      * plugin accepts. You may want to include your own properties on each pluginInfo object for use
      * during the incremental callback.
-     * 
+     *
      * @param {object} - navigatorInfo - A suitable navigatorInfo object is created via
      * the function browserInfo in modern_browser.js, but you can create one directly... {
      *   clientOS: "Intel Mac OS X 10.5", chromeLocale: "en-US", appID: "...", appRelease: "3.5.3", appVersion: "20090824085414"
@@ -176,9 +176,9 @@ Pfs = {
         // Walk through the plugins and get the metadata from PFS2
         // PFS2 is JSONP and can't be called async using jQuery.ajax
         // We'll create a queue and manage our requests
-        for(var i=0; i< pluginInfos.length; i++) {            
+        for(var i=0; i < pluginInfos.length; i++) {
             if (Pfs.shouldSkipPluginNamed(pluginInfos[i].detected_version) !== true) {
-                finderState.findPluginQueue.push(pluginInfos[i]);    
+                finderState.findPluginQueue.push(pluginInfos[i]);
             }
             
         }
@@ -190,7 +190,7 @@ Pfs = {
      * @private
      * @returns {object}
      */
-    createFinder: function(navigatorInfo, incrementalCallback, finishedCallback) {        
+    createFinder: function(navigatorInfo, incrementalCallback, finishedCallback) {
         var finder = {
             // A list of plugin2mimeTypes
             findPluginQueue: [],
@@ -199,7 +199,7 @@ Pfs = {
             currentMime: -1,
             running: true,
            /**
-            * The user supplied callback for when finding plugin information is complete            
+            * The user supplied callback for when finding plugin information is complete
             */
             finishedFn: finishedCallback,
             incrementalCallbackFn: incrementalCallback,
@@ -223,11 +223,11 @@ Pfs = {
                     { detection: this.currentPlugin.detection_type, mimetype: mime },
                     function(){ that.pfs2Success.apply(that, arguments);},
                     function(){ that.pfs2Error.apply(that, arguments);}
-                );  
+                );
             },
             /**
              * Stops the finder from continuing to work it's way through plugins in the queue
-             * 
+             *
              * Added to support web badges, where we are only interested in making PFS2 calls
              * until we hit our first "bad" plugin. Then we stop making calls.
              *
@@ -240,7 +240,7 @@ Pfs = {
             },
             /************* PFS2 below *************/
             callPfs2: function(args_in, successFn, errorFn) {
-                if (Pfs.endpoint == "error set me before using") {                    
+                if (Pfs.endpoint == "error set me before using") {
                     Pfs.e("You must configure Pfs.endpoint before using this library");
                     return false;
                 }
@@ -253,12 +253,11 @@ Pfs = {
                     error: errorFn,
                     retry: 3,
                     success: successFn,
-                    timeout: Pfs.TIMEOUT,                    
-                    url: Pfs.endpoint                    
+                    timeout: Pfs.TIMEOUT,
+                    url: Pfs.endpoint
                 });
                 return true;
-            },            
-            
+            },
             startFindingNextMimetypeOnCurrentPlugin: function() {
                 this.currentMime += 1;
                 if (this.currentMime < this.currentPlugin.mimes.length) {
@@ -273,14 +272,14 @@ Pfs = {
                             status: Pfs.UNKNOWN,
                             url: ""
                         });
-                        this.currentPlugin.classified = true;                        
+                        this.currentPlugin.classified = true;
                     }
                     this.startFindingNextPlugin();
                 }
             },
             /**
              * pfs2Success JSON callback data has the following structure
-             * [ 
+             * [
              *   {
              *     aliases: {
              *         literal: [String, String],
@@ -294,37 +293,40 @@ Pfs = {
              * ]
              */
             pfs2Success: function(data, status){
-                var currentPluginName = this.currentPlugin.detected_version;
+                var currentPluginName = this.currentPlugin.detected_version,
+                    searchingResults = true,
+                    pluginMatch = false,
+                    pluginInfo;
+
                 if (this.currentPlugin.raw && this.currentPlugin.raw.name) {
                     currentPluginName = this.currentPlugin.raw.name;
                 }
-                
-                var searchingResults = true;
-                var pluginMatch = false;
-                var pluginInfo;
 
                 for (var i =0; i < data.length; i++) {
-                    if (! searchingResults) { break; }
-                    
+                    if (!searchingResults) {
+                        break;
+                    }
+
                     // Grab the current PFS info, and ensure it's well-formed and usable.
                     var pfsInfo = data[i];
-                    if (! pfsInfo.aliases ||
-                       (! pfsInfo.aliases.literal  && ! pfsInfo.aliases.regex )) {
-                            Pfs.e("Malformed PFS2 plugin info, no aliases");
-                            break;
+                    if (!pfsInfo.aliases || (!pfsInfo.aliases.literal && !pfsInfo.aliases.regex)) {
+                        Pfs.e("Malformed PFS2 plugin info, no aliases");
+                        break;
                     }
-                    if (! pfsInfo.releases ||
-                        ! pfsInfo.releases.latest) {
-                            Pfs.e("Malformed PFS2 plugin info, no latest release");
-                            break;
+
+                    if (!pfsInfo.releases || !pfsInfo.releases.latest) {
+                        Pfs.e("Malformed PFS2 plugin info, no latest release");
+                        break;
                     }
+
                     // Is pfsInfo the plugin we seek?
-                    var searchingPluginInfo = true;
+                    var searchingPluginInfo = true,
+                    j = 0;
                     if (pfsInfo.aliases.literal) {
-                        for(var j=0; searchingPluginInfo && j < pfsInfo.aliases.literal.length; j++) {
+                        for(j=0; searchingPluginInfo && j < pfsInfo.aliases.literal.length; j++) {
                             var litName = pfsInfo.aliases.literal[j];
                             
-                            if (Pfs.$.trim(currentPluginName) == Pfs.$.trim(litName)) {
+                            if (Pfs.$.trim(currentPluginName) === Pfs.$.trim(litName)) {
                                 searchingResults = false;
                                 searchingPluginInfo = false;
                                 pluginMatch = true;
@@ -332,8 +334,9 @@ Pfs = {
                             }
                         }
                     }
+
                     if (pfsInfo.aliases.regex) {
-                        for(var j=0; searchingPluginInfo && j < pfsInfo.aliases.regex.length; j++) {
+                        for(j=0; searchingPluginInfo && j < pfsInfo.aliases.regex.length; j++) {
                             var rxName = pfsInfo.aliases.regex[j];
                             if (new RegExp(rxName).test(currentPluginName)) {
                                 searchingResults = false;
@@ -343,19 +346,20 @@ Pfs = {
                             }
                         }
                     }
+
                     // This does not appear to be the plugin we're looking for,
                     // so continue.
-                    if (!pluginMatch) { continue; }
+                    if (!pluginMatch) {
+                        continue;
+                    }
                     
                     var searchPluginRelease = true;
-
                     // Prepare a result to be reported to detection callback
                     var to_report = {
                         pluginInfo: this.currentPlugin,
                         pfsInfo: pfsInfo,
                         status: null,
-                        url: pfsInfo.releases.latest ?  
-                            pfsInfo.releases.latest.url : ''
+                        url: pfsInfo.releases.latest ? pfsInfo.releases.latest.url : ''
                     };
                     
                     if (pfsInfo.releases.latest) {
@@ -372,7 +376,7 @@ Pfs = {
 
                             // Installed is newer than the latest in PFS
                             case 1:
-				/* No exact match records 'newer', but keeplooking */
+                                /* No exact match records 'newer', but keeplooking */
                                 if (Pfs.reportPluginFn) {
                                     Pfs.reportPluginFn([pfsInfo], 'newer');
                                 }
@@ -405,10 +409,11 @@ Pfs = {
                                 break;
 
                             // Installed may be older than latest, keep looking...
-                            default: 
+                            default:
                                 break;
                         }
                     }
+
                     if (this.running && searchPluginRelease && pfsInfo.releases.others) {
                         var others = pfsInfo.releases.others;
                         for (var k=0; searchPluginRelease && k < others.length; k++) {
@@ -425,8 +430,8 @@ Pfs = {
                                 case 0:
                                     if (others[k].status == Pfs.VULNERABLE) {
                                         to_report.status = Pfs.VULNERABLE;
-                                        this.currentPlugin.classified = true; 
-                                    } else {                                            
+                                        this.currentPlugin.classified = true;
+                                    } else {
                                         to_report.status = Pfs.OUTDATED;
                                         this.currentPlugin.classified = true;
                                     }
@@ -458,7 +463,7 @@ Pfs = {
                     
                     searchingResults = false;
                     
-                    this.startFindingNextPlugin();    
+                    this.startFindingNextPlugin();
                 } else {
                     //none of the plugins for this mime-type were a match... try the next mime-type
                     this.startFindingNextMimetypeOnCurrentPlugin();
@@ -475,23 +480,23 @@ Pfs = {
                     Pfs.$.jsonp(xhr);
                 } else {
                     Pfs.$('table.status').replaceWith(Pfs.$('#error-panel').show());
-                    Pfs.e("Doh failed on mime/plugin ", xhr, textStatus, errorThrown, this.currentPlugin.mimes[this.currentMime], this.currentPlugin);    
+                    Pfs.e("Doh failed on mime/plugin ", xhr, textStatus, errorThrown, this.currentPlugin.mimes[this.currentMime], this.currentPlugin);
                 }
-            }            
+            }
         };
         return finder;
     },
     /**
-     * Discover 
+     * Discover
      */
-    knownPluginsByMimeType: function(navigatorInfo, mimeType, incrementalCallback, finishedCallback) {        
+    knownPluginsByMimeType: function(navigatorInfo, mimeType, incrementalCallback, finishedCallback) {
         var pluginInfos = Pfs.simulatePlugins(mimeType);
         Pfs.listPluginInfos(navigatorInfo, pluginInfos, incrementalCallback, finishedCallback);
     },
     /**
      * @private
      */
-    simulatePlugins: function(mimeType) {        
+    simulatePlugins: function(mimeType) {
         var simulatePlugin = { length: 1, "0": {
                             name: "", description: "", version: "0",
                             length: 1, "0": {type: mimeType}}};
@@ -507,7 +512,7 @@ Pfs = {
      * has a mimes property. This is a space delimited list of all the mime-types the
      * plugin accepts. You may want to include your own properties on each pluginInfo object for use
      * during the incremental callback.
-     * 
+     *
      * @param {object} - navigatorInfo - A suitable navigatorInfo object is created via
      * the function browserInfo in modern_browser.js, but you can create one directly... {
      *   clientOS: "Intel Mac OS X 10.5", chromeLocale: "en-US", appID: "...", appRelease: "3.5.3", appVersion: "20090824085414"
@@ -525,16 +530,16 @@ Pfs = {
      * only once.
      */
     listPluginInfos: function(navigatorInfo, pluginInfos, incrementalCallback, finishedCallback) {
-        var listerState = this.createPluginLister(navigatorInfo, incrementalCallback, finishedCallback);        
+        var listerState = this.createPluginLister(navigatorInfo, incrementalCallback, finishedCallback);
         for(var i=0; i< pluginInfos.length; i++) {
-            listerState.findPluginQueue.push(pluginInfos[i]);    
+            listerState.findPluginQueue.push(pluginInfos[i]);
         }
         listerState.startFindingNextPlugin();
     },
     /**
      * Creates an instance of the PluginLister object, which returns
      * known plugins based on mime-types.
-     * 
+     *
      * @private
      * @returns {object}
      */
@@ -544,7 +549,7 @@ Pfs = {
          * override createFinder's pfs2Success
          */
         lister.pfs2Success = function(data, status){
-            for (var i =0; i < data.length; i++) {                    
+            for (var i =0; i < data.length; i++) {
                 // Grab the current PFS info, and ensure it's well-formed and usable.
                 var pfsInfo = data[i];
                 if (! pfsInfo.aliases ||
@@ -587,7 +592,7 @@ Pfs = {
             Pfs.w("compVersion v1, v2, either v1 or v2 or both is undefined v1=", v1, " v2=", v2);
             return -1;
         }
-    },    
+    },
     /**
      * Ghetto BNF:
      * A Version = description? version comment?
@@ -595,21 +600,23 @@ Pfs = {
      * versionPart = digit | character
      * versionChain = versionPart (seperator versionPart)+
      * seperator = .
-     * 
+     *
      * v - string like "Quicktime 3.0.12"
      * @private
      * @client
      * return a "VersionChain" which is an array of version parts example - [3, 0, 12]
      */
      parseVersion: function(v) {
-        var tokens = v.split(' ');
-        var versionChain = [];
-    
-        var inVersion = false;
-        var inNumericVersion = false;
-        var inCharVersion = false;
-    
-        var currentVersionPart = "";
+        // It may happen that v is not a string but an int so, simply always
+        // ensure that we are working with a string or .split will fail.
+        var versionString = '' + v,
+            tokens = versionString.split(' '),
+            versionChain = [],
+            inVersion = false,
+            inNumericVersion = false,
+            inCharVersion = false,
+            currentVersionPart = "";
+
         function isNumeric(c) { return ! isNaN(parseInt(c, 10)); }
         
         function isChar(c) { return "abcdefghijklmnopqrstuvwxyz".indexOf(c.toLowerCase())  >= 0; }
@@ -621,13 +628,11 @@ Pfs = {
                 inVersion = true;
                 inNumericVersion = true;
                 currentVersionPart += token.charAt(j);
-            } /* else {
-                skip we are in the description
-            }*/
+            }
         }
         
         function finishVersionPart() {
-            //cleanup this versionPart        
+            //cleanup this versionPart
             if (inNumericVersion) {
                 versionChain.push(parseInt(currentVersionPart, 10));
                 inNumericVersion = false;
@@ -636,27 +641,27 @@ Pfs = {
                 inCharVersion = false;
             } else {
                 Pfs.e("This should never happen", currentVersionPart, inNumericVersion, inCharVersion);
-            }        
+            }
             currentVersionPart = "";
         }
         
         for(var i=0; i < tokens.length; i++){
-            var token = Pfs.$.trim(tokens[i]);            
+            var token = Pfs.$.trim(tokens[i]);
             if (token.length === 0) {
                 continue;
             }
-            for(var j=0; j < token.length; j++) {                
+            for(var j=0; j < token.length; j++) {
                 if (inVersion) {
                     if (isNumeric(token.charAt(j))) {
                         if (inCharVersion) {
                             finishVersionPart();
                         }
                         inNumericVersion = true;
-                        currentVersionPart += token.charAt(j);                
+                        currentVersionPart += token.charAt(j);
                     } else if(isSeperator(token.charAt(j))) {
                         finishVersionPart();
-                    } else if(j != 0 && isChar(token.charAt(j))) {
-                        //    j != 0 - We are mid-token right? 3.0pre OK 3.0 Pre BAD
+                    } else if(j !== 0 && isChar(token.charAt(j))) {
+                        //    j !== 0 - We are mid-token right? 3.0pre OK 3.0 Pre BAD
                         if (inNumericVersion) {
                             finishVersionPart();
                         }
@@ -678,11 +683,11 @@ Pfs = {
                 //clean up previous token
                 finishVersionPart();
             }
-        }                
-        if (! inVersion) {            
+        }
+        if (! inVersion) {
             Pfs.w("Unable to parseVersion from " + v);
-        }        
-        return versionChain;    
+        }
+        return versionChain;
     },
     /**
      * Given two "version chains" it determines if the first is newer, the same, or older
@@ -696,7 +701,8 @@ Pfs = {
      * @returns integer
      */
     compVersionChain: function(vc1, vc2) {
-        for(var i=0; i < vc1.length && i < vc2.length; i++) {
+        var i = 0;
+        for(i=0; i < vc1.length && i < vc2.length; i++) {
             if (vc1[i] != vc2[i]) {
                 if (vc1[i] > vc2[i]) {
                     return 1;
@@ -708,7 +714,7 @@ Pfs = {
         if (vc1.length != vc2.length) {
             // Okay there is extra version info... is the difference significant?
             if (vc1.length > vc2.length) {
-                for (var i = vc2.length; i < vc1.length; i++) {
+                for (i == vc2.length; i < vc1.length; i++) {
                     var version = parseInt(vc1[i], 10);
                     if (isNaN(version) ||
                         version > 0) {
@@ -717,7 +723,7 @@ Pfs = {
                 }
                 return 0;
             } else {
-                for (var i = vc1.length; i < vc2.length; i++) {
+                for (i = vc1.length; i < vc2.length; i++) {
                     var version = parseInt(vc2[i], 10);
                     if (isNaN(version) ||
                         version > 0) {
@@ -736,15 +742,29 @@ Pfs = {
     shouldSkipPluginNamed: function(name) {
         // IEBug [].indexOf is undefined
         if (this.skipPluginsNamed.indexOf) {
-            return this.skipPluginsNamed.indexOf(Pfs.$.trim(name)) >= 0;    
+            return this.skipPluginsNamed.indexOf(Pfs.$.trim(name)) >= 0;
         } else {
             return this.skipPluginsNamed.join(', ').indexOf(Pfs.$.trim(name)) >= 0;
         }
     },
-     
+    /**
+     * A list of well known plugin filenams that are *always* up to date.
+     * Totem being DivX, WMP, or QuickTime we'll skip. For 'VLC' Totem see browserPlugins
+     * where we rename the plugin to Totem.
+     */
+    shouldSkipPluginFileNamed: function (filename) {
+        var skipPluginsFilesNamed = ["libtotem-mully-plugin.so", "libtotem-narrowspace-plugin.so", "libtotem-gmp-plugin.so"];
+
+        // IEBug [].indexOf is undefined
+        if (skipPluginsFilesNamed.indexOf) {
+            return skipPluginsFilesNamed.indexOf(Pfs.$.trim(filename)) >= 0;
+        } else {
+            return skipPluginsFilesNamed.join(', ').indexOf(Pfs.$.trim(filename)) >= 0;
+        }
+    },
     /**
      * Creates an object that can normailze and store mime types
-     * 
+     *
      * @returns {object} - the master mime instance
      */
     createMasterMime: function() {
@@ -779,24 +799,6 @@ Pfs = {
     i: function(msg) {if (window.console && console.info && console.info.apply) {console.info.apply(console, arguments);}}
 };
 
-/*
-if (window.opera) {
-    window.console = window.console || {};
-    console.info || (console.error = opera.postError)
-    console.info || (console.warn = opera.postError)
-    console.info || (console.info = opera.postError)
-} else if (! window.console) {
-    var ul = Pfs.$('body').append('IE Console: <ul id="console"></ul>');
-    
-    window.ielog = function(msg) {
-        ul.append('<li>' + msg + '</li>');
-    };
-    window.console = {};
-    console.error = window.ielog;
-    console.warn = window.ielog;
-    console.info = window.ielog;
-    
-}*/
 //Bug#535030 - All PFS scripts will use Pfs.$ to access jQuery, so that additional inclusions of
 // jQuery or a conflicting  library won't break jQuery or it's plugins
 

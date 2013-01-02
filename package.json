@@ -1,0 +1,7 @@
+{
+  "name": "perfidies-of-the-web",
+  "description": "The client side of Mozilla's Plugin Finder Server",
+  "author": "espressive <sneethling@mozilla.com>",
+  "version": "0.1",
+  "engine": "node >= 0.6.12"
+}

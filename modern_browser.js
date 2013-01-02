@@ -35,10 +35,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-/*jslint browser: true, plusplus: false */
+/*jslint browser: true */
 /*global Pfs, PluginDetect, BrowserDetect, window*/
-// jslint that we should fix below
-/*jslint eqeqeq: false*/
 if (window.Pfs === undefined) {
     window.Pfs = {};
 }
@@ -50,53 +48,34 @@ if (window.Pfs === undefined) {
 Pfs.UI = {
     unknownVersionPlugins: [],
     /**
-     * PPK browser detection
-     */
-    browserDetected: BrowserDetect.detect(),
-    /**
-     * Enhancements to fix some bugs
-     */
-    fixupBrowserDetected: function() {
-        if ('Explorer' === Pfs.UI.browserDetected.browser) {
-	    // Two issues with BrowserDetect 
-	    // 1) 7.0; and 8.0; get rid of ';'
-            // 2) detected.build is currently '???', give it something decent
-            Pfs.UI.browserDetected.version = '' + parseFloat(Pfs.UI.browserDetected.version, 10);
-            Pfs.UI.browserDetected.build = Pfs.UI.browserDetected.version;
-	    }
-    },
-    /**
      * Creates a navigatorInfo object from the browser's navigator objectj
      */
     browserInfo: function () {
-        var appID;
-        Pfs.UI.fixupBrowserDetected();
-        if ('Firefox' === Pfs.UI.browserDetected.browser || 'Minefield' === Pfs.UI.browserDetected.browser) {
+        var appID,
+        browser = BrowserDetect.browser,
+        version = parseInt(BrowserDetect.version, 10),
+        build = navigator.buildID || version,
+        clientOS = BrowserDetect.OS,
+        // IEBug navigator.language is undefined, fallback to IE specific browserLanguage
+        language = navigator.language || navigator.browserLanguage || 'en-US';
+
+        if ('Firefox' === browser || 'Minefield' === browser) {
             appID = '{ec8030f7-c20a-464f-9b0e-13a3a9e97384}';
         } else {
-            appID = Pfs.UI.browserDetected.browser;
+            appID = browser;
         }
-        
-        // IEBug navigator.language is undefined, fallback to IE specific browserLanguage
+
         return {
             appID:        appID,
-            appRelease:   Pfs.UI.browserDetected.version,
-            appVersion:   Pfs.UI.browserDetected.build,
-            clientOS:     navigator.oscpu || navigator.platform,
-            chromeLocale: navigator.language || navigator.browserLanguage || 'en-US'
+            appRelease:   version,
+            appVersion:   build,
+            clientOS:     clientOS,
+            chromeLocale: language
         };
-    },
-    inList: function (pluginsSeen, name) {
-        // IEBug
-        if (pluginsSeen.indexOf) {
-            return pluginsSeen.indexOf(name) >= 0;
-        } else {
-            return pluginsSeen.join(', ').indexOf(name) >= 0;
-        }        
     },
     /**
      * Cleans up the navigator.plugins object into a list of plugin2mimeTypes
-     * 
+     *
      * Each plugin2mimeTypes has two fields
      * * plugin - the plugin Description including Version information if available
      * * mimes - An array of mime types
@@ -111,14 +90,16 @@ Pfs.UI = {
      * @returns {array} A list of plugin2mimeTypes
      */
     browserPlugins: function (plugins) {
-        var p = [];
-        var pluginsSeen = [];
+        var p = [],
+            pluginsSeen = [];
+
         for (var i = 0; i < plugins.length; i++) {
-            var pluginInfo;
-            var rawPlugin = plugins[i];
+            var pluginInfo,
+                rawPlugin = plugins[i];
+
             if (Pfs.shouldSkipPluginNamed(plugins[i].name) ||
-                this.shouldSkipPluginFileNamed(plugins[i].filename) ||
-                Pfs.UI.inList(pluginsSeen, plugins[i].name)) {
+                Pfs.shouldSkipPluginFileNamed(plugins[i].filename) ||
+                Pfs.$.inArray(plugins[i].name, pluginsSeen) > -1) {
                 continue;
             }
             // Linux Totem acts like QuickTime, DivX, VLC, etc Bug#520041
@@ -131,7 +112,7 @@ Pfs.UI = {
                 };
                 for (var m = 0; m < plugins[i].length; m++) {
                     rawPlugin[m] = plugins[i][m];
-                }                
+                }
             }
             var mimes = [];
             var marcelMrceau = Pfs.createMasterMime(); /* I hate mimes */
@@ -142,8 +123,8 @@ Pfs.UI = {
                     if (marcelMrceau.seen[mm] === undefined) {
                         marcelMrceau.seen[mm] = true;
                         mimes.push(mm);
-                    } 
-                }            
+                    }
+                }
             }
             var wrappedPlugin = Pfs.UI.browserPlugin(rawPlugin, mimes);
             if (Pfs.UI.hasVersionInfo(wrappedPlugin.detected_version) === false) {
@@ -159,7 +140,7 @@ Pfs.UI = {
                     // mime types are space delimited
                     mimeValue += " " + mimes[jj];
                     if (length > Pfs.MAX_MIMES_LENGTH &&
-                        (i + 1) < mimes.length) {                        
+                        (i + 1) < mimes.length) {
                         mimeValues.push(mimeValue);
                         //reset
                         mimeValue = mimes[i + 1];
@@ -174,30 +155,11 @@ Pfs.UI = {
             
             if (rawPlugin.name) {
                 // Bug#519256 - guard against duplicate plugins
-                pluginsSeen.push(plugins[i].name);    
+                pluginsSeen.push(plugins[i].name);
             }
             
         }
-        
         return p;
-    },
-    /**
-     * A list of well known plugin filenams that are *always* up to date.
-     * Totem being DivX, WMP, or QuickTime we'll skip. For 'VLC' Totem see browserPlugins
-     * where we rename the plugin to Totem
-     * 
-     * @private
-     */
-    skipPluginsFilesNamed: ["libtotem-mully-plugin.so",
-                            "libtotem-narrowspace-plugin.so",
-                            "libtotem-gmp-plugin.so"],
-    shouldSkipPluginFileNamed: function (filename) {
-        // IEBug [].indexOf is undefined
-        if (this.skipPluginsFilesNamed.indexOf) {
-            return this.skipPluginsFilesNamed.indexOf(Pfs.$.trim(filename)) >= 0;    
-        } else {
-            return this.skipPluginsFilesNamed.join(', ').indexOf(Pfs.$.trim(filename)) >= 0;
-        }
     },
     /**
      * @private
@@ -212,16 +174,16 @@ Pfs.UI = {
     usePinladyDetection: true,
     /**
      * Cleans up a browser's plugin info based on it's
-     * name, plugin.version property (Fx 3.6 only), description, 
+     * name, plugin.version property (Fx 3.6 only), description,
      * and mime types. Using this info it chooses the
      * best candidate for a version string.
      *
-     * This may include special handeling 
+     * This may include special handeling
      * for known plugins using the PluginDetect or other hooks.
      *
      * lastly it return a new plugin like object suitable for
      * use with findPluginInfos.
-     * 
+     *
      * @public
      * @ui - PluginDetect dependency belongs in UI, as well as hasVerison
      *       It's not so much a name hook as override version detection
@@ -241,16 +203,16 @@ Pfs.UI = {
                 var j =  PluginDetect.getVersion('Java', 'getJavaInfo.jar', [0, 0, 0]);
                 if (j !== null) {
                     newPlugin.detected_version = "Java Embedding Plugin " + j.replace(/,/g, '.').replace(/_/g, '.');
-                } 
-            } else if (/.*Flash/.test(rawPlugin.name) && ! rawPlugin.version) {
+                }
+            } else if (/.*Flash/.test(rawPlugin.name) && !rawPlugin.version) {
                 var f = PluginDetect.getVersion('Flash');
                 if (f !== null) {
-                    newPlugin.detected_version = rawPlugin.name + " " + f.replace(/,/g, '.');    
+                    newPlugin.detected_version = rawPlugin.name + " " + f.replace(/,/g, '.');
                 }
             } else if (/.*QuickTime.*/.test(rawPlugin.name)) {
                 var q = PluginDetect.getVersion('QuickTime');
                 if (q !== null) {
-                    newPlugin.detected_version = "QuickTime Plug-in " + q.replace(/,/g, '.');            
+                    newPlugin.detected_version = "QuickTime Plug-in " + q.replace(/,/g, '.');
                 }
             } else if (/Windows Media Player Plug-in.*/.test(rawPlugin.name)) {
                 var w = PluginDetect.getVersion('WindowsMediaPlayer');
@@ -269,9 +231,9 @@ Pfs.UI = {
                 // we'll return only '7.6.5.0'
                 newPlugin.detected_version = rawPlugin.version;
                 newPlugin.detection_type = 'version_available';
-            } else if (rawPlugin.name && this.hasVersionInfo(newPlugin.name)) {                
+            } else if (rawPlugin.name && this.hasVersionInfo(newPlugin.name)) {
                 newPlugin.detected_version = rawPlugin.name;
-            } else if (rawPlugin.description && this.hasVersionInfo(rawPlugin.description)) {                
+            } else if (rawPlugin.description && this.hasVersionInfo(rawPlugin.description)) {
                 newPlugin.detected_version = rawPlugin.description;
             } else {
                 if (/.*BrowserPlus.*/.test(rawPlugin.name)) {
