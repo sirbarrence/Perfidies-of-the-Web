@@ -208,21 +208,26 @@ Pfs = {
                 if (this.running && this.findPluginQueue.length > 0) {
                     this.currentPlugin = this.findPluginQueue.pop();
                     this.currentMime = 0;
-                    
+
                     this.findPluginInfo();
                 } else {
                     this.finishedFn();
                 }
             },
             findPluginInfo: function() {
-                
+
                 var mime = this.currentPlugin.mimes[this.currentMime];
-                    
                 var that = this;
-                this.callPfs2(
-                    { detection: this.currentPlugin.detection_type, mimetype: mime },
-                    function(){ that.pfs2Success.apply(that, arguments);},
-                    function(){ that.pfs2Error.apply(that, arguments);}
+
+                this.callPfs2({
+                        detection: this.currentPlugin.detection_type, mimetype: mime
+                    },
+                    function() {
+                        that.pfs2Success.apply(that, arguments);
+                    },
+                    function() {
+                        that.pfs2Error.apply(that, arguments);
+                    }
                 );
             },
             /**
@@ -245,7 +250,7 @@ Pfs = {
                     return false;
                 }
                 var args = Pfs.$.extend({}, navigatorInfo, args_in);
-                
+
                 Pfs.$.jsonp({
                     cache: true,
                     callbackParameter: "callback",

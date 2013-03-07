@@ -1,180 +1,31 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
-                    "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-  <!-- Tests Perfidies Directory... Not the minified script -->
-  <script src="../lib/jquery-1.3.2.min.js"></script>
-  <script src="../lib/browserdetect.js"></script>
-  <script src="../lib/plugindetect.js"></script>
-  <script src="../perfidies.js"></script>
-  <script src="../messages.js"></script>
-  <script src="../modern_browser.js"></script>
-  <script src="../exploder.js"></script>
-  <script src="../plugincheck.js"></script>
-  
-  <script src="qunit/jquery.js"></script>
-  <link rel="stylesheet" href="qunit/testsuite.css" type="text/css" media="screen" />
-  <script type="text/javascript" src="qunit/testrunner.js"></script>
+<!DOCTYPE HTML>
+  <html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Perfidies of the Web Unit Tests</title>
 
+    <link rel="stylesheet" type="text/css" href="http://code.jquery.com/qunit/qunit-1.10.0.css" media="screen" />
 
-  
+    <!-- Tests Perfidies Directory... Not the minified script -->
+    <script src="../lib/jquery-1.3.2.min.js"></script>
+    <script src="../lib/browserdetect.js"></script>
+    <script src="../lib/plugindetect.js"></script>
+    <script src="../perfidies.js"></script>
+    <script src="../messages.js"></script>
+    <script src="../modern_browser.js"></script>
+    <script src="../exploder.js"></script>
+    <script src="../plugincheck.js"></script>
+  </head>
+  <body>
+    <div id="qunit"></div>
 
-  <script>
-Pfs.endpoint = 'NOT USED FOR UNIT TEST! Going over the wire? Sounds like an integration test pal.';
+    <script src="http://code.jquery.com/jquery-1.9.0.js"></script>
+    <script src="http://code.jquery.com/qunit/qunit-1.10.0.js"></script>
 
-$(document).ready(function(){
-    module("Browser JavaScript dependencies");
-    test("split", function(){
-        same("QuickTime Plug-in 7.6.2".split(' '),
-             ["QuickTime", "Plug-in", "7.6.2"], "Split when I say split");
-    });
-    test("isNaN parseInt", function(){
-        same(! isNaN(parseInt('a'), 10), false);
-        same(! isNaN(parseInt('0'), 10), true);
-        same(! isNaN(parseInt('1'), 10), true);
-        same(! isNaN(parseInt('a3'), 10), false);
-        same(! isNaN(parseInt('3a'), 10), true);
-    });
-    test("string.indexOf toLowerCase", function(){
-      same("abcdefghijklmnopqrstuvwxyz".indexOf('t'.toLowerCase())  >= 0, true);
-        same("abcdefghijklmnopqrstuvwxyz".indexOf('Q'.toLowerCase())  >= 0, true);
-        same("abcdefghijklmnopqrstuvwxyz".indexOf('3'.toLowerCase())  >= 0, false);
-    });
-    test("=== operator", function(){
-        same('.' === '.', true);
-    });
-    
-    test("string iteration", function(){
-        var token = "hello";
-        //same(token[1], 'e'); FAILS on IE 7
-        same(token.charAt(1), 'e');
-    });
-    
-    //test("", function(){});
-    test("split", function(){
-        same("QuickTime Plug-in 7.6.2".split(' '),
-             ["QuickTime", "Plug-in", "7.6.2"], "Split when I say split");
-    });
-    module("Pfs General Comparison");
-    test("parseVersion", function(){
-        same(Pfs.parseVersion("QuickTime Plug-in 7.6.2"), [7, 6, 2],
-               "QuickTime Plug-in 7.6.2 should give us a version chain 7 major 6 minor 2 just for the fun of it");
-      
-        
-        same(Pfs.parseVersion("QuickTime Plug-in 7.6.2 Extra Edition"), [7, 6, 2],
-               "A version may have a descriptin and a comment");
-        same(Pfs.parseVersion("QuickTime Plug-in 7.6.2pre"), [7, 6, 2, "pre"],
-               "pre or other codes should be part of the version component, but comments aren't");
-        
-        same(Pfs.parseVersion("VLC Multimedia Plugin (compatible Totem 2.26.1)"), [2, 26, 1],
-               "Weird characters around the version won't break us");
-        
-    });
-    
-    test("compVersionChain", function(){
-        equals(Pfs.compVersionChain([7, 6, 2], [7, 6, 1]), 1, "First version chain is newer");
-        equals(Pfs.compVersionChain([7, 6, 1], [7, 6, 2]), -1, "First version chain is older");
-        equals(Pfs.compVersionChain([7, 6, 2], [7, 6, 2]), 0, "Same versions should be 0");
-        
-        equals(Pfs.compVersionChain([7, 6, 2, 'b'], [7, 6, 1, 'a']), 1, "First version chain is newer and uses char");
-        
-        equals(Pfs.compVersionChain([7, 6], [7, 6, 1]), -1, "First version chain is older and has fewer version components");
-        equals(Pfs.compVersionChain([7, 9], [7, 6, 1]), 1, "First version chain is newer and has fewer version components");
-        
-        equals(Pfs.compVersionChain([1, 2], [1, 2, 0]), 0, "Extra Version Chain components that are zero should be treated as equal");
-    });
-    test("compVersion", function(){
-        equals(Pfs.compVersion("QuickTime Plug-in 7.6.2", "QuickTime Plug-in 7.6.1"), 1, "Comparing a newer plugin should return a 1");
-    });
-    
-    
-    module("Mime normalization");
-    test("MasterMime", function(){
-        var mimeMaster = Pfs.createMasterMime();
-        var actual = mimeMaster.normalize("application/x-java-applet;version=1.3");
-        equals(actual, "application/x-java-applet");
-    });
-    
-    module("Navigator");
-    
-    //Simulator a Firefox 3.5 Mac OS X
-    // mocks out the navigator.plugins object, which sometimes acts as an array, sometimes as an object
-    var testBrowserNavigatorPlugins = {
-        length: 5,
-        "0": {            
-            name: "Shockwave Flash", description: "Shockwave Flash 10.0 r12",
-            length: 2,
-            "0": {type: "application/x-shockwave-flash"},
-            "1": {type: "application/futuresplash"}
-        },
-        "1": {
-            name: "Default Plugin", description: "Gecko default plugin",
-            length: 1,
-            "0": {type: "*"}
-        },
-        "2": {
-            name: "QuickTime Plug-in 7.6.2",
-            description: "The QuickTime Plugin allows you to view a wide variety of multimedia content in web pages. For more information, visit the <A HREF=http://www.apple.com/quicktime>QuickTime</A> Web site.",
-            length: 76,
-            "0": {type: "application/sdp"} ,"1": {type: "application/x-sdp"} ,"2": {type: "application/x-rtsp"} ,"3": {type: "video/quicktime"} ,"4": {type: "video/x-msvideo"} ,"5": {type: "video/msvideo"} ,"6": {type: "video/avi"} ,"7": {type: "video/flc"} ,"8": {type: "application/x-ogg"} ,"9": {type: "application/ogg"} ,"10": {type: "video/x-ogg"} ,"11": {type: "video/ogg"} ,"12": {type: "application/x-annodex"} ,"13": {type: "application/annodex"} ,"14": {type: "video/x-annodex"} ,"15": {type: "video/annodex"} ,"16": {type: "audio/x-wav"} ,"17": {type: "audio/wav"} ,"18": {type: "audio/aiff"} ,"19": {type: "audio/x-aiff"} ,"20": {type: "audio/basic"} ,"21": {type: "audio/mid"} ,"22": {type: "audio/x-midi"} ,"23": {type: "audio/midi"} ,"24": {type: "audio/vnd.qcelp"} ,"25": {type: "audio/x-gsm"} ,"26": {type: "audio/AMR"} ,"27": {type: "audio/aac"} ,"28": {type: "audio/x-aac"} ,"29": {type: "audio/x-caf"} ,"30": {type: "audio/vnd.qcelp"} ,"31": {type: "audio/ac3"} ,"32": {type: "audio/x-ac3"} ,"33": {type: "audio/x-ogg"} ,"34": {type: "audio/ogg"} ,"35": {type: "audio/x-speex"} ,"36": {type: "audio/speex"} ,"37": {type: "audio/x-annodex"} ,"38": {type: "audio/annodex"} ,"39": {type: "video/x-mpeg"} ,"40": {type: "video/mpeg"} ,"41": {type: "audio/mpeg"} ,"42": {type: "audio/x-mpeg"} ,"43": {type: "video/3gpp"} ,"44": {type: "audio/3gpp"} ,"45": {type: "video/3gpp2"} ,"46": {type: "audio/3gpp2"} ,"47": {type: "video/sd-video"} ,"48": {type: "application/x-mpeg"} ,"49": {type: "video/mp4"} ,"50": {type: "audio/mp4"} ,"51": {type: "audio/x-m4a"} ,"52": {type: "audio/x-m4p"} ,"53": {type: "audio/x-m4b"} ,"54": {type: "video/x-m4v"} ,"55": {type: "audio/mpeg"} ,"56": {type: "audio/x-mpeg"} ,"57": {type: "audio/mp3"} ,"58": {type: "audio/x-mp3"} ,"59": {type: "audio/mpeg3"} ,"60": {type: "audio/x-mpeg3"} ,"61": {type: "image/x-bmp"} ,"62": {type: "image/x-macpaint"} ,"63": {type: "image/pict"} ,"64": {type: "image/x-pict"} ,"65": {type: "image/png"} ,"66": {type: "image/x-png"} ,"67": {type: "image/x-quicktime"} ,"68": {type: "image/x-sgi"} ,"69": {type: "image/x-targa"} ,"70": {type: "image/tiff"} ,"71": {type: "image/x-tiff"} ,"72": {type: "image/jp2"} ,"73": {type: "image/jpeg2000"} ,"74": {type: "image/jpeg2000-image"} ,"75": {type: "image/x-jpeg2000-image"}
-        },
-        "3": {            
-            name: "iPhotoPhotocast",
-            description: "iPhoto6",
-            length: 1,
-            "0": {type: "application/photo"}
-        },
-        "4": {
-            name: "Java Embedding Plugin 0.9.7.1",
-            description: "Runs Java applets using the latest installed versions of Java. For more information: <A HREF=http://javaplugin.sourceforge.net/>Java Embedding Plugin</A>. Run version test: <A HREF=http://gemal.dk/browserspy/java.html>Java Information</A>.",
-            length: 1,
-            "0": {type: "application/x-java-applet"} // and many more 
-        }
-    };
-    
-    var testPluginInfos = [  { "detected_version": "Shockwave Flash 10.0 r12", "mimes": [ "application/x-shockwave-flash", "application/futuresplash" ],
-                               "classified": false, "raw":  testBrowserNavigatorPlugins[0]},
-                          { "detected_version": "Default Plugin", "mimes": [ "*" ],
-                            "classified": false, "raw":  testBrowserNavigatorPlugins[1]},
-                          // { "detected_version": "QuickTime Plug-in 7.6.2", "mimes": [ "application/sdp", "application/x-sdp", "application/x-rtsp", "video/quicktime", "video/x-msvideo", "video/msvideo", "video/avi", "video/flc", "application/x-ogg", "application/ogg", "video/x-ogg", "video/ogg", "application/x-annodex", "application/annodex", "video/x-annodex", "video/annodex", "audio/x-wav", "audio/wav", "audio/aiff", "audio/x-aiff", "audio/basic", "audio/mid", "audio/x-midi", "audio/midi", "audio/vnd.qcelp", "audio/x-gsm", "audio/AMR", "audio/aac", "audio/x-aac", "audio/x-caf", "audio/vnd.qcelp", "audio/ac3", "audio/x-ac3", "audio/x-ogg", "audio/ogg", "audio/x-speex", "audio/speex", "audio/x-annodex", "audio/annodex", "video/x-mpeg", "video/mpeg", "audio/mpeg", "audio/x-mpeg", "video/3gpp", "audio/3gpp", "video/3gpp2", "audio/3gpp2", "video/sd-video", "application/x-mpeg", "video/mp4", "audio/mp4", "audio/x-m4a", "audio/x-m4p", "audio/x-m4b", "video/x-m4v", "audio/mpeg", "audio/x-mpeg", "audio/mp3", "audio/x-mp3", "audio/mpeg3", "audio/x-mpeg3", "image/x-bmp", "image/x-macpaint", "image/pict", "image/x-pict", "image/png", "image/x-png", "image/x-quicktime", "image/x-sgi", "image/x-targa", "image/tiff", "image/x-tiff", "image/jp2", "image/jpeg2000", "image/jpeg2000-image", "image/x-jpeg2000-image" ],
-                          // classified: false, raw: testBrowserNavigatorPlugins[2] },
-                          { "detected_version": "Shockwave Flash 10.0 r12", "mimes": [ "application/x-shockwave-flash", "application/futuresplash" ],
-                            "classified": true, "raw":  testBrowserNavigatorPlugins[0] },
-                          { "detected_version": "iPhoto6", "mimes": ["application/photo"],
-                            "classified": false, "raw":  testBrowserNavigatorPlugins[3] },
-                          { "detected_version": "Java Embedding Plugin 1.5.0.19", "mimes": ["application/x-java-applet"],
-                          "detection_type": "original",
-                          "classified": false, "raw": testBrowserNavigatorPlugins[4]}
-                        ];
-    
-    test("browserPlugins", function(){
-        // mocking Java -- such an easy target, 21st century COBOL 
-        PluginDetect.getVersion = function(pluginName, jarFile){
-            return "1.5,0,19";
-        };
-        var actual = Pfs.UI.browserPlugins(testBrowserNavigatorPlugins);        
-        same(actual[3].detected_version, testPluginInfos[4].detected_version,
-             "Detected version matches. Note, we skip the default plugin, so it's off by 1 (3 instead of 4)");
-        same(actual[3].mimes, testPluginInfos[4].mimes,
-             "Mime types match");
-        same(actual[3].detection_type, testPluginInfos[4].detection_type,
-             "detection_type matches");
-        same(actual[3].classified, testPluginInfos[4].classified,
-             "classified is the same");
-        same(actual[3].raw, testPluginInfos[4].raw,
-             "Underlying raw plugin is the same");
-    });
-  });
-
-  </script>
-</head>
-<body>
-  
- <h1>PerFidieS Unit Tests</h1>
- <h2 id="banner"></h2>
- <h2 id="userAgent"></h2>
- <ol id="tests"></ol>
- <div id="main"></div>
- <div id="debug"></div>
-</body>
+    <script src="unit/init.js"></script>
+    <script src="unit/pfs_general.js"></script>
+    <script src="unit/pfs_comparison.js"></script>
+    <script src="unit/pfs_normalization.js"></script>
+    <script src="unit/pfs_navigator.js"></script>
+  </body>
 </html>

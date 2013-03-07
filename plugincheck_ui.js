@@ -98,7 +98,7 @@
         loadingCopy = Pfs_internal[0],
         loadingAlt = Pfs_internal[1];
 
-    Pfs.$('#pfs-status').html(loadingCopy + " <img class='progress' src='/static/img/sandstone/ajax-loader.gif' alt='" + loadingAlt + "' />");
+    Pfs.$('#pfs-status').html(loadingCopy + " <img class='progress' src='/media/img/sandstone/ajax-loader.gif' alt='" + loadingAlt + "' />");
     Pfs.UI.DISABLE_LINK = "#howto-disable";
     Pfs.UI.disabledClick = function() {
     Pfs.$('.howto-disable-plugin')
@@ -358,7 +358,7 @@
             worstCount = outdated;
             worstStatus = Pfs_internal[15];
         }
-        
+
         if (worstStatus !== undefined) {
             Pfs.$('#pfs-status').html(worstStatus).addClass(Pfs.VULNERABLE);
         } else if (Pfs.$('.plugin').size() === 0) {
@@ -380,7 +380,7 @@
     };
     //Used in regression testing
     Pfs.UI.displayPlugin = incrementalCallbackFn;
-    
+
     // This is the main function to call to get the ball rolling.
     // @endpoint                The end point to call
     // @incrementalCallbackFn   The function to call as each plugin is checked and data returned
@@ -393,7 +393,6 @@
         }
         Pfs.endpoint = window.location.protocol + "//" + endpoint;
         Pfs.UI.navInfo = Pfs.UI.browserInfo();
-        console.log(Pfs.UI.navInfo);
         Pfs.findPluginInfos(Pfs.UI.navInfo, browserPlugins, incrementalCallbackFn, finishedCallbackFn);
     };
 
