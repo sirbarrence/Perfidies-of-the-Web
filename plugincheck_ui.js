@@ -56,30 +56,8 @@
 
     if ('Explorer' === BrowserDetect.browser) {
         Pfs.$('#exploder').show('slow');
-        Pfs.$('#modern_browsers').show();
-    } else {
-        var currentBrowser = true;
-        var unknownBrowser = true;
-        var supportedBrowserAndVersion = [
-            ['Firefox', '3.5'], ['Safari', '4'], ['Opera', '10.5'], ['Chrome', '4'], ['Minefield', '4']
-        ];
-
-        for (var browserPV in supportedBrowserAndVersion) {
-            if (supportedBrowserAndVersion[browserPV][0] === BrowserDetect.browser) {
-                unknownBrowser = false;
-            }
-            if (supportedBrowserAndVersion[browserPV][0] === BrowserDetect.browser &&
-                Pfs.compVersion(supportedBrowserAndVersion[browserPV][1], BrowserDetect.version) > 0) {
-                currentBrowser = false;
-                break;
-            }
-        }
-        if (unknownBrowser === true) {
-            Pfs.$('#modern_browsers').show('slow');
-        } else if (currentBrowser === false) {
-            Pfs.$('#old_browser').show('slow');
-        }
     }
+
     // Copy below... s: Text in Status area  l: Button Label in Action area
     // PFs_internal is defined in messages.js
     var states = {};
@@ -103,7 +81,7 @@
                           .filter(':visible')
                           .filter(':odd')
                           .addClass('odd');
-            
+
             updateDisplayId = undefined;
         }
     };
@@ -138,7 +116,7 @@
                             Pfs.$('#plugin-template').parent().append(el);
                         }
                     }
-                    
+
                 }
             }
         } else if (Pfs.OUTDATED === status || Pfs.MAYBE_OUTDATED === status) {
@@ -217,21 +195,21 @@
             Pfs.$('.name a, .action a', html).attr('href', url)
             .filter('[href=' + Pfs.UI.DISABLE_LINK + ']').click(Pfs.UI.disabledClick);
         }
-        
+
         addBySorting(html, statusCopy.code);
-        
+
         html.show();
     };
-    
+
     /* Pfs.UI.browserPlugins gives us a subset of the user's
            the navigator.plugins object has many more, including duplicates.
            Since this is a debugging view.... We'll show both */
     var pluginsObject = window.iePlugins || window.navigator.plugins || {};
     var browserPlugins = Pfs.UI.browserPlugins(pluginsObject);
-    
+
     /* track plugins in the UI */
     var total = 0; var disabled = 0; var vulnerables = 0; var outdated = 0;
-    
+
     /**
      * incremental callback function
      */
@@ -266,7 +244,7 @@
                     outdated++;
                     break;
             }
-            
+
             var copy = states[data.status];
             if (Pfs.CURRENT === data.status) {
                 copy.s = Pfs.parseVersion(data.pluginInfo.detected_version).join('.');
@@ -279,7 +257,7 @@
         }
             displayPlugins(plugin, copy, moreInfo, url, vulnerability_url, total);
             total++;
-            
+
         } else {
             Pfs.e("We have an unknown status code when displaying UI.", data);
         }
@@ -294,7 +272,7 @@
 
         Pfs.UI.unknownVersionPlugins = [];
         var worstCount = 0;
-        
+
         var worstStatus = undefined;
         if (disabled > 0) {
             worstCount = disabled;
