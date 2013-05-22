@@ -37,68 +37,16 @@
 
 /*jslint browser: true, plusplus: false */
 /*global Pfs, Pfs_internal, PluginDetect, BrowserDetect, window, escape*/
-// jslint that we should fix below
-/*jslint eqeqeq: false*/
 
 /**
  * UI code for http://mozilla.com/en-US/plugincheck/
  */
 (function () {
-    
-    var icons = {
-            flash:       "icon-flash.png",
-            java:        "icon-java.png",
-            quicktime:   "icon-quicktime.png",
-            divx:        "icon-divx.png",
-            totem:       "icon-totem.png",
-            flip4mac:    "icon-flip4mac.png",
-            wmp:         "icon-wmp.png",
-            vlc:         "icon-vlc.png",
-            silverlight: "icon-silverlight.png",
-            shockwave:   "icon-shockwave.png",
-            real:        "icon-real.png",
-            acrobat:     "icon-acrobat.png",
-            officelive:  "icon-officelive.png",
-            iphoto:      "icon-iphoto.png",
-            generic:     "default.png"
-        },
-        iconFor = function (pluginName) {
-            if (pluginName.indexOf("Flash") >= 0) {
-                return icons.flash;
-            } else if (pluginName.indexOf("Java") >= 0) {
-                return icons.java;
-            } else if (pluginName.indexOf("QuickTime") >= 0) {
-                return icons.quicktime;
-            } else if (pluginName.indexOf("DivX") >= 0) {
-                return icons.divx;
-            } else if (pluginName.indexOf("Totem") >= 0) {
-                return icons.totem;
-            } else if (pluginName.indexOf("Flip4Mac") >= 0) {
-                return icons.flip4mac;
-            } else if (pluginName.indexOf("WindowsMediaPlayer") >= 0) {
-                return icons.wpm;
-            } else if (pluginName.indexOf("VLC") >= 0) {
-                return icons.vlc;
-            } else if (pluginName.indexOf("Silverlight") >= 0) {
-                return icons.silverlight;
-            } else if (pluginName.indexOf("Shockwave") >= 0) {
-                return icons.shockwave;
-            } else if (pluginName.indexOf("RealPlayer") >= 0) {
-                return icons.real;
-            } else if (pluginName.indexOf("Adobe Acrobat") >= 0) {
-                return icons.acrobat;
-            } else if (pluginName.indexOf("Office Live") >= 0) {
-                return icons.officelive;
-            } else if (pluginName.indexOf("iPhoto") >= 0) {
-                return icons.iphoto;
-            } else {
-                return icons.generic;
-            }
-        },
-        loadingCopy = Pfs_internal[0],
+
+    var loadingCopy = Pfs_internal[0],
         loadingAlt = Pfs_internal[1];
 
-    Pfs.$('#pfs-status').html(loadingCopy + " <img class='progress' src='/media/img/sandstone/ajax-loader.gif' alt='" + loadingAlt + "' />");
+    Pfs.$('#pfs-status').html(loadingCopy + " <img class='progress' src='/media/img/plugincheck/ajax-loader.gif' alt='" + loadingAlt + "' />");
     Pfs.UI.DISABLE_LINK = "#howto-disable";
     Pfs.UI.disabledClick = function() {
     Pfs.$('.howto-disable-plugin')
@@ -215,7 +163,7 @@
                     //no other plugins, be the first plugin
                     Pfs.$('#plugin-template').parent().append(el);
                 }
-                
+
             }
         } else if (Pfs.UNKNOWN === status) {
             //unknown plugins go last, not much help to the user
@@ -237,10 +185,10 @@
             .addClass('plugin')
             .addClass(statusCopy.code);
         var rowClass;
-        
+
         Pfs.$('.name a', html).text(plugin.name);
         Pfs.$('.version', html).html(plugin.description);
-        Pfs.$('.icon', html).attr('src', iconFor(plugin.name));
+        Pfs.$('.icon', html).attr('src', plugin.name);
 
         if (moreInfo !== null) {
             Pfs.$('.status .copy', html).text(statusCopy.s + Pfs_internal[25]);

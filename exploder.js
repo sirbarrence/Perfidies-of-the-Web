@@ -1,18 +1,18 @@
 /*jslint browser: true */
 /*global Pfs, PluginDetect, window*/
 
-if (Pfs.$.browser.msie) {    
+if (Pfs.$.browser.msie) {
     window.iePlugins = [];
-    var alterNavigator = function (name, description, filename, mimeType) {        
+    var alterNavigator = function (name, description, filename, mimeType) {
         window.iePlugins.push({
             name: name,
             description: description,
             filename: filename,
             length: 1,
             "0": {type: mimeType }
-        });        
+        });
     };
-    
+
     /* IE has no proper navigator.plugins, so we use the pinlady library
        to detect COM objects or plugins via <object> tags.
        Once we've detected an installed plugin, we set either the \
@@ -20,8 +20,8 @@ if (Pfs.$.browser.msie) {
        Lastly we disable pinladyDetection which is an option for
        Firefox, Opera, Safari, and Chrome */
     Pfs.UI.usePinladyDetection = false;
-    
-    
+
+
     //Bug#519823 If we want to start using Applets again
     var j =  PluginDetect.getVersion('Java', 'getJavaInfo.jar', [0, 0, 0]);
     if (j !== null) {
@@ -29,13 +29,13 @@ if (Pfs.$.browser.msie) {
                        'Runs Java applets using the latest installed versions of Java.',
                        'npjp2.dll',
                        'application/x-java-applet');
-    } 
-    
+    }
+
     var f = PluginDetect.getVersion('Flash');
     if (f !== null) {
         alterNavigator('Shockwave Flash', 'Shockwave Flash ' + f.replace(/,/g, '.'), 'NPSWF32.dll', 'application/x-shockwave-flash');
     }
-    
+
     var q = PluginDetect.getVersion('QuickTime');
     if (q !== null) {
         alterNavigator('QuickTime Plug-in ' + q.replace(/,/g, '.'),
@@ -43,7 +43,7 @@ if (Pfs.$.browser.msie) {
                        'npqtplugin.dll',
                        'video/quicktime');
     }
-    
+
     var w = PluginDetect.getVersion('WindowsMediaPlayer');
     if (q !== null) {
         alterNavigator('Windows Media Player Plug-in Dynamic Link Library',
@@ -52,7 +52,7 @@ if (Pfs.$.browser.msie) {
                        'video/x-ms-wmv');
     }
     var d = PluginDetect.getVersion('Shockwave');
-    
+
     if (d !== null) {
         alterNavigator('Shockwave for Director',
                        d.replace(/,/g, '.'),
@@ -80,7 +80,7 @@ if (Pfs.$.browser.msie) {
                        'npvlc.dll', // FIXME
                        'video/mp4');
     }
-    
+
     //BrowserPlus
     var browserPlusMime = 'application/x-yahoo-browserplus_2';
     Pfs.$('body').append('<object id="__browserPlusPluginID" type="' + browserPlusMime + '"></object>');
