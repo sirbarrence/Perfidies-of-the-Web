@@ -39,14 +39,14 @@
  * There are two layers to the mozilla.com/en-US/plugincheck/ page: The UI and the PFS2 API.
  *
  * This file is the lower level code that talks to PFS2.
- * 
+ *
  * The main entry point into the PFS2 Client API is the findPluginInfos function.
  * This funtion takes a NavigatorInfo, a list of PluginInfos, and a callback function.
  *
  * It will serially contact the PFS2 server for each plugin and analyze the results.
  * It categorizes the plugins into disableNow, vulnerable, current, outdated, and unknown
  * and the callback recieves a list of each of these types of plugins
- * 
+ *
  * @author Austin King (ozten)
  */
 if (window.Pfs === undefined) { window.Pfs = {}; }
@@ -86,7 +86,7 @@ Pfs = {
      * This browser is vulnerable to exploit due to the
      * currently installed plugin version. Upgrade the plugin
      * to the latest version.
-     * 
+     *
      * Also can be used as a constant with PFS2Info status field
      */
     VULNERABLE: "vulnerable",
@@ -97,7 +97,7 @@ Pfs = {
      * and at least one plugin detected with this version
      * has been reported as vulnerable. Manual inspection
      * is suggested.
-     * 
+     *
      * Also can be used as a constant with PFS2Info status field
      */
     MAYBE_VULNERABLE: "maybe_vulnerable",
@@ -118,7 +118,7 @@ Pfs = {
      * and at least one plugin detected with this version
      * has been reported as outdated. Manual inspection
      * is suggested.
-     * 
+     *
      * Also can be used as a constant with PFS2Info status field
      */
     MAYBE_OUTDATED: "maybe_outdated",
@@ -138,7 +138,7 @@ Pfs = {
     UNKNOWN:    "unknown",
     /**
      * Status Code for incremental callback.
-     * 
+     *
      * Indicats that the browser's plugin is actually newer
      * than any releases tracked by the PFS2 server.
      */
@@ -172,7 +172,7 @@ Pfs = {
      */
     findPluginInfos: function(navigatorInfo, pluginInfos, incrementalCallback, finishedCallback) {
         var finderState = this.createFinder(navigatorInfo, incrementalCallback, finishedCallback);
-        
+
         // Walk through the plugins and get the metadata from PFS2
         // PFS2 is JSONP and can't be called async using jQuery.ajax
         // We'll create a queue and manage our requests
@@ -180,7 +180,7 @@ Pfs = {
             if (Pfs.shouldSkipPluginNamed(pluginInfos[i].detected_version) !== true) {
                 finderState.findPluginQueue.push(pluginInfos[i]);
             }
-            
+
         }
         finderState.startFindingNextPlugin();
     },
@@ -330,7 +330,7 @@ Pfs = {
                     if (pfsInfo.aliases.literal) {
                         for(j=0; searchingPluginInfo && j < pfsInfo.aliases.literal.length; j++) {
                             var litName = pfsInfo.aliases.literal[j];
-                            
+
                             if (Pfs.$.trim(currentPluginName) === Pfs.$.trim(litName)) {
                                 searchingResults = false;
                                 searchingPluginInfo = false;
@@ -357,7 +357,7 @@ Pfs = {
                     if (!pluginMatch) {
                         continue;
                     }
-                    
+
                     var searchPluginRelease = true;
                     // Prepare a result to be reported to detection callback
                     var to_report = {
@@ -366,7 +366,7 @@ Pfs = {
                         status: null,
                         url: pfsInfo.releases.latest ? pfsInfo.releases.latest.url : ''
                     };
-                    
+
                     if (pfsInfo.releases.latest) {
                         to_report.url = pfsInfo.releases.latest.url;
                         to_report.release_info = pfsInfo.releases.latest;
@@ -376,7 +376,7 @@ Pfs = {
                             pfsInfo.releases.latest.detected_version :
                             pfsInfo.releases.latest.version;
                         var pl_version = this.currentPlugin.detected_version;
-                        
+
                         switch(Pfs.compVersion(pl_version, pfs_version)) {
 
                             // Installed is newer than the latest in PFS
@@ -461,13 +461,13 @@ Pfs = {
                     if (this.currentPlugin.classified) {
                         this.incrementalCallbackFn(to_report);
                     }
-                    
+
                 }//for over the pfs2 JSON data
 
                 if (this.running === false || pluginMatch) {
-                    
+
                     searchingResults = false;
-                    
+
                     this.startFindingNextPlugin();
                 } else {
                     //none of the plugins for this mime-type were a match... try the next mime-type
@@ -623,11 +623,11 @@ Pfs = {
             currentVersionPart = "";
 
         function isNumeric(c) { return ! isNaN(parseInt(c, 10)); }
-        
+
         function isChar(c) { return "abcdefghijklmnopqrstuvwxyz".indexOf(c.toLowerCase())  >= 0; }
-        
+
         function isSeperator(c) { return c === '.'; }
-    
+
         function startVersion(token, j) {
             if (isNumeric(token.charAt(j))) {
                 inVersion = true;
@@ -635,7 +635,7 @@ Pfs = {
                 currentVersionPart += token.charAt(j);
             }
         }
-        
+
         function finishVersionPart() {
             //cleanup this versionPart
             if (inNumericVersion) {
@@ -649,7 +649,7 @@ Pfs = {
             }
             currentVersionPart = "";
         }
-        
+
         for(var i=0; i < tokens.length; i++){
             var token = Pfs.$.trim(tokens[i]);
             if (token.length === 0) {
@@ -719,7 +719,7 @@ Pfs = {
         if (vc1.length != vc2.length) {
             // Okay there is extra version info... is the difference significant?
             if (vc1.length > vc2.length) {
-                for (i == vc2.length; i < vc1.length; i++) {
+                for (i = vc2.length; i < vc1.length; i++) {
                     var version = parseInt(vc1[i], 10);
                     if (isNaN(version) ||
                         version > 0) {
@@ -740,7 +740,7 @@ Pfs = {
         }
         return 0;
     },
-    
+
     /**
      * @private
      */
