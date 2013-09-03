@@ -45,9 +45,9 @@ if (Pfs.$.browser.msie) {
     }
 
     var w = PluginDetect.getVersion('WindowsMediaPlayer');
-    if (q !== null) {
+    if (w !== null) {
         alterNavigator('Windows Media Player Plug-in Dynamic Link Library',
-                       q.replace(/,/g, '.'),
+                       w.replace(/,/g, '.'),
                        'nsdsplay.dll',
                        'video/x-ms-wmv');
     }
